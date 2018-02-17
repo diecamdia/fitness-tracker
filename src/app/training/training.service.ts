@@ -31,6 +31,8 @@ export class TrainingService {
       .subscribe((exercises: Exercise[]) => {
           this.availableExercises = exercises;
           this.exercisesChanged.next([...this.availableExercises]);
+      }, error => {
+
       });
   }
 
@@ -70,6 +72,8 @@ export class TrainingService {
       .valueChanges()
       .subscribe((exercises: Exercise[]) => {
         this.finishedExercisesChanged.next(exercises);
+      }, error => {
+
       });
   }
 
