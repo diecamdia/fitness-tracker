@@ -6,6 +6,11 @@
 export const environment = {
   production: false,
   firebase: {
-
+    apiKey: "AIzaSyCAeYociJedMNOXAVSv5dliLWmNihwoZvA",
+    authDomain: "fitness-traker.firebaseapp.com",
+    databaseURL: "https://fitness-traker.firebaseio.com",
+    projectId: "fitness-traker",
+    storageBucket: "fitness-traker.appspot.com",
+    messagingSenderId: "428308513247"
   }
 };

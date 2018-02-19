@@ -1,5 +1,7 @@
+import { UIService } from './../shared/ui.service';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 import { Exercise } from "./exercise.model";
 import { AngularFirestore } from 'angularfire2/firestore';
 
@@ -11,14 +13,17 @@ export class TrainingService {
   private availableExercises: Exercise[] = [];
   private runningExercise: Exercise;
   private exercises: Exercise[] = [];
+  private fsSubs: Subscription[] = [];
 
-  constructor(private db: AngularFirestore) {}
+  constructor(private db: AngularFirestore, private uiService: UIService) {}
 
   fetchAvailableExercises() {
-    this.db
+    this.uiService.loadingSateChanged.next(true);
+    this.fsSubs.push(this.db
       .collection('availabeExercises')
       .snapshotChanges()
       .map(docArray => {
+        // throw(new Error());
         return docArray.map( doc => {
           return {
             id: doc.payload.doc.id,
@@ -29,11 +34,14 @@ export class TrainingService {
         });
       })
       .subscribe((exercises: Exercise[]) => {
-          this.availableExercises = exercises;
-          this.exercisesChanged.next([...this.availableExercises]);
+        this.availableExercises = exercises;
+        this.exercisesChanged.next([...this.availableExercises]);
+        this.uiService.loadingSateChanged.next(false);
       }, error => {
-
-      });
+        this.uiService.loadingSateChanged.next(false);
+        this.uiService.showSnackbar('Fectchiing Exercises failed, please retry more later.',null,3000);
+        this.exercisesChanged.next(null);
+      }));
   }
 
   completeExercise() {
@@ -67,14 +75,16 @@ export class TrainingService {
   }
 
   fetchCompletedOrCancelledExercises() {
-    this.db
+    this.fsSubs.push(this.db
       .collection('finishedExercises')
       .valueChanges()
       .subscribe((exercises: Exercise[]) => {
         this.finishedExercisesChanged.next(exercises);
-      }, error => {
+      }));
+  }
 
-      });
+  cancelSubscriptions() {
+    this.fsSubs.forEach(subscription => subscription.unsubscribe());
   }
 
   private addDataToDataBase(exercise: Exercise) {
