@@ -6,7 +6,7 @@ import { Exercise } from "./exercise.model";
 import { AngularFirestore } from 'angularfire2/firestore';
 
 import * as fromRoot from '../app.reducer';
-import * as fromApp from '../shared/ui.actions';
+import * as UI from '../shared/ui.actions';
 import { Store } from '@ngrx/store';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class TrainingService {
   ) {}
 
   fetchAvailableExercises() {
-    this.store.dispatch(new fromApp.StartLoading());
+    this.store.dispatch(new UI.StartLoading());
     this.fsSubs.push(this.db
       .collection('availabeExercises')
       .snapshotChanges()
@@ -44,11 +44,11 @@ export class TrainingService {
       .subscribe((exercises: Exercise[]) => {
         this.availableExercises = exercises;
         this.exercisesChanged.next([...this.availableExercises]);
-        this.store.dispatch(new fromApp.StopLoading());
+        this.store.dispatch(new UI.StopLoading());
   }, error => {
         this.uiService.showSnackbar('Fectchiing Exercises failed, please retry more later.',null,3000);
         this.exercisesChanged.next(null);
-        this.store.dispatch(new fromApp.StopLoading());
+        this.store.dispatch(new UI.StopLoading());
       }));
   }
 
