@@ -84,7 +84,9 @@ export class TrainingService {
   }
 
   cancelSubscriptions() {
-    this.fsSubs.forEach(subscription => subscription.unsubscribe());
+    if (this.fsSubs) {
+      this.fsSubs.forEach(subscription => subscription.unsubscribe());
+    }
   }
 
   private addDataToDataBase(exercise: Exercise) {
