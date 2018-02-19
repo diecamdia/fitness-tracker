@@ -3,19 +3,19 @@
   <mat-card flFlex.xs="100%" fxFlex="400px">
       <mat-card-title fxLayoutAlign="center">Time to start a workout!</mat-card-title>
       <mat-card-content fxLayoutAlign="center">
-        <mat-form-field *ngIf="!isLoading && exercises">
+        <mat-form-field *ngIf="!(isLoading$ | async) && exercises">
           <mat-select placeholder="Select your training" ngModel name="exercise" required>
             <mat-option *ngFor='let exercise of exercises' [value]="exercise.id">
               {{ exercise.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-spinner>
+        <mat-progress-spinner *ngIf="(isLoading$ | async)" mode="indeterminate" color="primary"></mat-progress-spinner>
       </mat-card-content>
       <mat-card-actions fxLayoutAlign="center">
-          <button *ngIf="!isLoading && exercises" type="submit" mat-button [disabled]="f.invalid">Start</button>
-          <button *ngIf="!isLoading && !exercises" type="button" mat-button (click)="fecthExercises()">Fetch again</button>
-          <h4 *ngIf="isLoading">Data is loading...</h4>
+          <button *ngIf="!(isLoading$ | async) && exercises" type="submit" mat-button [disabled]="f.invalid">Start</button>
+          <button *ngIf="!(isLoading$ | async) && !exercises" type="button" mat-button (click)="fecthExercises()">Fetch again</button>
+          <h4 *ngIf="(isLoading$ | async)">Data is loading...</h4>
       </mat-card-actions>
   </mat-card>
 </form>
