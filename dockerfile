@@ -1,11 +1,14 @@
-#Primera etapa: instalación y compilación
-FROM node:8.6 as builder
-WORKDIR  /app
-COPY ./ /app/
-RUN npm install
-RUN npm run build
+FROM node:8.6-alpine
 
-#Segunda etapa: despliegue.
-FROM nginx:1.13
-COPY --from=builder /app/dist/ /usr/share/nginx/html
-COPY ./nginx-config.conf /etc/nginx/conf.d/default.conf
+WORKDIR /code
+
+RUN apk update \
+  && apk add --update alpine-sdk \
+  && apk del alpine-sdk \
+  && rm -rf /tmp/* /var/cache/apk/* *.tar.gz ~/.npm \
+  && npm cache verify \
+  && sed -i -e "s/bin\/ash/bin\/sh/" /etc/passwd
+
+RUN npm install -g @angular/cli@1.6.6
+
+CMD ["npm", "start"]

@@ -1,0 +1,13 @@
+version:  '3.6'
+
+services:
+  generator:
+    build:
+      context: .
+    image: node/angular-dev
+    volumes:
+      - ./:/code/
+    ports:
+      - "4200:4200"
+      - "49153:49153"
+
